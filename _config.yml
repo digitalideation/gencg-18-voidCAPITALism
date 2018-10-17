@@ -5,8 +5,8 @@
 # baseurl: "students-test/" # the subpath of your site, e.g. /blog/
 # url: "" # the base hostname & protocol for your site
 
-twitter_username: yourname
-github_username: yourname
+twitter_username: voidCAPITALism
+github_username: voidCAPITALism
 title: I.BA_222_GENCG.H1801
 subtitle: I.BA_222_GENCG.H1801 - Winter 2018
 
@@ -16,6 +16,6 @@ subtitle: I.BA_222_GENCG.H1801 - Winter 2018
 collections:
   01-Shapes:
     output: true
-    
+
   02-Agents:
     output: true
