@@ -16,6 +16,7 @@ function setup() {
 }
 
 function draw() {
+  push()
   for(let y=0;y<=10;y++){
     //EVEN
     if(y&1==1){
@@ -25,7 +26,6 @@ function draw() {
         drawCube();
         translate(cubeDiagonale,0);
       }
-      pop();
     //UNEVEN
     }else {
       push();
@@ -33,10 +33,37 @@ function draw() {
         drawCube();
         translate(cubeDiagonale,0);
       }
+    }
+    pop();
+    translate(0,cubeDimension+cubeDiagonale/2);
+  }
+  pop()
+  push()
+  for(let y=0;y<=10;y++){
+    //EVEN
+    if(y&1==1){
+      push();
+      translate(cubeDiagonale/2-.25*cubeDiagonale/2,cubeDimension);
+      scale(.25,.25);
+      for(let x=0;x<=windowWidth/cubeDiagonale;x++){
+        drawCube();
+        translate(cubeDiagonale*4,0);
+      }
+      pop();
+    //UNEVEN
+    }else {
+      push();
+      translate(cubeDiagonale-.25*cubeDiagonale/2,cubeDimension);
+      scale(.25,.25);
+      for(let x=0;x<=windowWidth/cubeDiagonale;x++){
+        drawCube();
+        translate(cubeDiagonale*4,0);
+      }
       pop();
     }
     translate(0,cubeDimension+cubeDiagonale/2);
   }
+  pop()
 }
 
 function drawCube(){
