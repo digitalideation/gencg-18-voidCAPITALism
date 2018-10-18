@@ -16,3 +16,5 @@ subtitle: I.BA_222_GENCG.H1801 - Winter 2018
 collections:
   01-Shapes:
     output: true
+  02-Patterns:
+    output: true
