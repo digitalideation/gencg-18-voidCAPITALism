@@ -1,10 +1,10 @@
 // Global var
-let mp = false;
 let deg = 0;
 let positions = [];
 let posTo;
 let posCurrent;
 let direction;
+let multiplier = 1;
 function setup() {
   // Canvas setup
   canvas = createCanvas(windowWidth, windowHeight);
@@ -22,15 +22,19 @@ function setup() {
   posTo = createVector(0,0);
   posCurrent = createVector(0,0);
   direction = createVector(0,0);
+  diff = createVector(0,0);
 }
 
 function draw() {
   drawStar(posCurrent);
   direction = p5.Vector.sub(posTo,posCurrent);
-  direction = direction.normalize();
-  direction = direction.mu
+  diff = direction.copy()
+  direction.normalize();
+  if(abs(direction.x*multiplier)<abs(diff.x)&&abs(direction.y*multiplier)<abs(diff.y)){
+    direction = direction.mult(multiplier);
+  }
   posCurrent.add(direction);
-  if((floor(posCurrent.x)+1==posTo.x||floor(posCurrent.x)-1==posTo.x||floor(posCurrent.x)==posTo.x)&&(floor(posCurrent.y)+1==posTo.y||floor(posCurrent.y)-1==posTo.y||floor(posCurrent.y)==posTo.y)){
+  if(closeEnough(posCurrent,posTo,1.0)){
     if(positions.length>0){
       posTo = positions[0].copy();
       positions.shift();
@@ -38,9 +42,18 @@ function draw() {
   }
 }
 
+function closeEnough(posCurrent,posTo,delta){
+  let diffX = abs(posCurrent.x - posTo.x);
+  let diffY = abs(posCurrent.y - posTo.y);
+
+  return diffX<delta && diffY<delta
+}
+
 function keyPressed() {
   if (key == 't' || key == 'T') {saveThumb(650, 350)}
   if (key == 's' || key == 'S') {savePic(windowWidth,windowHeight)}
+  if (key == 'a' || key == 'A') {multiplier++}
+  if (key == 'd' || key == 'D') {multiplier--}
 }
 
 // Tools
@@ -74,11 +87,7 @@ function windowResized() {
 }
 
 function mousePressed(){
-  mp = true;
   positions.push(createVector(mouseX,mouseY));
-}
-function mouseReleased(){
-  mp = false;
 }
 
 // Int conversion

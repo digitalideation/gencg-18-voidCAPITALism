@@ -1,6 +1,6 @@
 ---
 layout: sketch
-title: "Line Exp 01"
+title: "StarLines with Agents"
 category: "Experiment"
 thumb_name: "thumb.jpg"
 includes:
