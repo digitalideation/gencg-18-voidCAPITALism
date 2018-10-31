@@ -6,23 +6,29 @@ let posCurrent;
 let direction;
 let multiplier = 1;
 function setup() {
+  //Fullscreen
+  const allowFullScreen = event => {
+  	event.preventDefault();
+    	event = event || window.event;
+      if(event.ctrlKey && event.keyCode==70 && event.shiftKey) {
+          document.documentElement.mozRequestFullScreen();
+      }
+  }
+  document.addEventListener('keyup', allowFullScreen)
+
   // Canvas setup
   canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("p5Container");
   // Detect screen density (retina)
   var density = displayDensity();
   pixelDensity(density);
-  background(0);
   c1 = color('#591ab8');
   c2 = color('#a81ab8');
   c3 = color('#1a2ab8');
   noFill();
   angleMode(DEGREES);
 
-  posTo = createVector(0,0);
-  posCurrent = createVector(0,0);
-  direction = createVector(0,0);
-  diff = createVector(0,0);
+  init();
 }
 
 function draw() {
@@ -42,6 +48,14 @@ function draw() {
   }
 }
 
+function init(){
+  background(0);
+  posTo = createVector(0,0);
+  posCurrent = createVector(0,0);
+  direction = createVector(0,0);
+  diff = createVector(0,0);
+}
+
 function closeEnough(posCurrent,posTo,delta){
   let diffX = abs(posCurrent.x - posTo.x);
   let diffY = abs(posCurrent.y - posTo.y);
@@ -50,10 +64,10 @@ function closeEnough(posCurrent,posTo,delta){
 }
 
 function keyPressed() {
-  if (key == 't' || key == 'T') {saveThumb(650, 350)}
-  if (key == 's' || key == 'S') {savePic(windowWidth,windowHeight)}
-  if (key == 'a' || key == 'A') {multiplier++}
-  if (key == 'd' || key == 'D') {multiplier--}
+  if (key == 't' || key == 'T') {saveThumb(650, 350);}
+  if (key == 's' || key == 'S') {savePic(windowWidth,windowHeight);}
+  if (key == 'a' || key == 'A') {multiplier++;}
+  if (key == 'd' || key == 'D') {multiplier--;}
 }
 
 // Tools
@@ -84,6 +98,7 @@ function drawStar(pos){
 // resize canvas when the window is resized
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight, false);
+  init();
 }
 
 function mousePressed(){

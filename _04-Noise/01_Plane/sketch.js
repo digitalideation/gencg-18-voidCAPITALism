@@ -6,6 +6,16 @@ let circles = [];
 let drawLines = false;
 
 function setup() {
+  //Fullscreen
+  const allowFullScreen = event => {
+  	event.preventDefault();
+    	event = event || window.event;
+      if(event.ctrlKey && event.keyCode==70 && event.shiftKey) {
+          document.documentElement.mozRequestFullScreen();
+      }
+  }
+  document.addEventListener('keyup', allowFullScreen)
+
   // Canvas setup
   canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("p5Container");

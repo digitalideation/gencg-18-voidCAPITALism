@@ -5,6 +5,16 @@ let agents = [];
 let ticks = 0;
 
 function setup() {
+  //Fullscreen
+  const allowFullScreen = event => {
+  	event.preventDefault();
+    	event = event || window.event;
+      if(event.ctrlKey && event.keyCode==70 && event.shiftKey) {
+          document.documentElement.mozRequestFullScreen();
+      }
+  }
+  document.addEventListener('keyup', allowFullScreen)
+
   // Canvas setup
   canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("p5Container");
@@ -12,21 +22,13 @@ function setup() {
   var density = displayDensity();
   pixelDensity(density);
   background(0);
-  for(let i = 0; i< numberOfAgents; i++){
-    agents.push(new Agent(numberOfTargets));
-  }
   colorMode(HSB);
+  initAgents();
 }
 
 function draw() {
-  if(ticks==500){
-    ticks = 0;
-    //background(0);
-  }else {
-    //background(0,5);
-  }
+  //Draw short trail. HSB to prevent gray trail "bug"
   background(0,0,0,0.045);
-  ticks++;
   agents.forEach(function(agent){
     agent.draw();
   });
@@ -34,13 +36,21 @@ function draw() {
 
 function keyPressed() {
   if (key == 't' || key == 'T') {saveThumb(650, 350)}
-  if (key == 's' || key == 'S') {savePic(windowWidth,windowHeight)}
+  if (key == 's' || key == 'S') {savePic(width,height)}
 }
 
 // Tools
 // resize canvas when the window is resized
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight, false);
+  initAgents();
+}
+
+function initAgents(){
+  agents=[];
+  for(let i = 0; i< numberOfAgents; i++){
+    agents.push(new Agent(numberOfTargets));
+  }
 }
 
 // Int conversion

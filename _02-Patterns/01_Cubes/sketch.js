@@ -1,8 +1,20 @@
 // Global var
 let cubeDimension = 50;
 let cubeDiagonale = cubeDimension*Math.sqrt(2);
+let cubesX;
+let cubesY;
 
 function setup() {
+  //Fullscreen
+  const allowFullScreen = event => {
+    event.preventDefault();
+      event = event || window.event;
+      if(event.ctrlKey && event.keyCode==70 && event.shiftKey) {
+          document.documentElement.mozRequestFullScreen();
+      }
+  }
+  document.addEventListener('keyup', allowFullScreen)
+
   // Canvas setup
   canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("p5Container");
@@ -13,23 +25,27 @@ function setup() {
   angleMode(DEGREES);
   fill(255);
   noStroke();
+
+  cubesX = windowWidth / cubeDiagonale+1;
+  cubesY = windowHeight / (cubeDiagonale/2+cubeDimension);
 }
 
 function draw() {
+  //Big Cubes
   push()
-  for(let y=0;y<=10;y++){
+  for(let y=0;y<=cubesY;y++){
     //EVEN
     if(y&1==1){
       push();
       translate(-(cubeDiagonale/2),0);
-      for(let x=0;x<=windowWidth/cubeDiagonale;x++){
+      for(let x=0;x<=cubesX;x++){
         drawCube();
         translate(cubeDiagonale,0);
       }
     //UNEVEN
     }else {
       push();
-      for(let x=0;x<=windowWidth/cubeDiagonale;x++){
+      for(let x=0;x<=cubesX;x++){
         drawCube();
         translate(cubeDiagonale,0);
       }
@@ -38,14 +54,16 @@ function draw() {
     translate(0,cubeDimension+cubeDiagonale/2);
   }
   pop()
+
+  //Mini Cubes
   push()
-  for(let y=0;y<=10;y++){
+  for(let y=0;y<=cubesY;y++){
     //EVEN
     if(y&1==1){
       push();
       translate(cubeDiagonale/2-.25*cubeDiagonale/2,cubeDimension);
       scale(.25,.25);
-      for(let x=0;x<=windowWidth/cubeDiagonale;x++){
+      for(let x=0;x<=cubesX;x++){
         drawCube();
         translate(cubeDiagonale*4,0);
       }
@@ -55,7 +73,7 @@ function draw() {
       push();
       translate(cubeDiagonale-.25*cubeDiagonale/2,cubeDimension);
       scale(.25,.25);
-      for(let x=0;x<=windowWidth/cubeDiagonale;x++){
+      for(let x=0;x<=cubesX;x++){
         drawCube();
         translate(cubeDiagonale*4,0);
       }
@@ -85,6 +103,8 @@ function keyPressed() {
 // resize canvas when the window is resized
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight, false);
+  cubesX = windowWidth / cubeDiagonale+1;
+  cubesY = windowHeight / (cubeDiagonale/2+cubeDimension);
 }
 
 // Int conversion
