@@ -20,3 +20,5 @@ collections:
     output: true
   03-Agents:
     output: true
+  04-Noise:
+    output: true

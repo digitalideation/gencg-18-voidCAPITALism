@@ -8,7 +8,7 @@ let weight = 1;
 let pos;
 let flagLtoR=true;
 let c;
-let flagAnimate = false;
+let flagAnimate = true;
 //Ugly but ok for now
 let dictDia = [];
 let dictPos = [];
@@ -54,18 +54,30 @@ function draw() {
     diameter-=diameterStep;
   }
   if(diameter<=0){
+    frameRate(1);
     background(0);
     for(let i=0;i<dictDia.length;i++){
       c = lerpColor(c1,c2,(1-(dictDia[i]/diameterStart)));
       stroke(c);
       if(dictAnimateFlag[i]){
         if(flagOut){
-          dictPos[i].x==dictPos[i-1]+1;
+          //dictPos[i].x+=10;
+          dictDia[i]+=6;
         }else{
-          dictPos[i].x==dictPos[i-1]-1;
+          //dictPos[i].x-=10;
+          dictDia[i]-=6;
+        }
+        ellipse(dictPos[i].x,dictPos[i].y,dictDia[i],dictDia[i]);
+      }else {
+        if(flagOut){
+          dictPos[i].x+=12;
+          //dictDia[i]+=20;
+        }else{
+          dictPos[i].x-=12;
+          //dictDia[i]-=20;
         }
       }
-      ellipse(dictPos[i].x,dictPos[i].y,dictDia[i],dictDia[i]);
+      //ellipse(dictPos[i].x,dictPos[i].y,dictDia[i],dictDia[i]);
     }
     flagOut = !flagOut;
   }
@@ -77,7 +89,7 @@ function mousePressed(){
 function mouseReleased(){
   mp = false;
   flagLtoR = !flagLtoR;
-  flagAnimate = true;
+  flagAnimate = !flagAnimate;
 }
 
 function keyPressed() {
