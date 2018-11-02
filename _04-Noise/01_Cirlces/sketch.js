@@ -3,7 +3,9 @@ let numberOfCircles = 10;
 let noiseFactor = 100;
 let colorSpeed = 0;
 let circles = [];
+let offsets = [];
 let drawLines = false;
+let history = false;
 
 function setup() {
   //Fullscreen
@@ -33,27 +35,34 @@ function setup() {
 }
 let tick=0;
 function draw() {
-  background(0);
+  //Draw history?
+  history ? background(0,0.5) : background(0,1);
+
   noiseFactor = map(mouseX,0,width,0,300,true);
   colorSpeed = floor(map(mouseY,0,height,0,100,true));
-  push()
+
+  push();
+  //Correct poition according to current noise
   translate(-noiseFactor/2,0);
   for(let i = 0;i<numberOfCircles;i++){
-    drawCircle(circles[i],tick)
+    drawCircle(circles[i],tick,offsets[i]);
   }
-  pop()
+  pop();
+
   tick++;
 }
 
 function keyPressed() {
   if (key == 't' || key == 'T') {saveThumb(650, 350)}
   if (key == 's' || key == 'S') {savePic(width,height)}
+  if (key == 'a' || key == 'A') {history=!history}
 }
 
 // Tools
-function drawCircle(points,tick){
+function drawCircle(points,tick,offset){
   for(let i = 0;i<points.length-1;i++){
-    let string = 'hsb('+((i+(tick*colorSpeed))%360)+', 100%, 100%)'
+    //String concatenation for the color String e.g 'hsb(190,100%,100%)'
+    let string = 'hsb('+(((i+offset)+(tick*colorSpeed))%360)+', 100%, 100%)'
     c = color(string);
     stroke(c);
     ellipse(
@@ -61,6 +70,7 @@ function drawCircle(points,tick){
       points[i].y,
       3,3
     );
+    //Lines between points
     if(drawLines){
       line(
         points[i].x + noise(points[i].x,points[i].y,tick)*noiseFactor,
@@ -70,6 +80,7 @@ function drawCircle(points,tick){
       );
     }
   }
+  //Line between first and last point
   if(drawLines){
     line(points[0].x + noise(points[0].x,points[0].y,tick)*noiseFactor,
       points[0].y,
@@ -79,6 +90,7 @@ function drawCircle(points,tick){
   }
 }
 
+
 function initCircle(){
   circles = [];
   let center = createVector(width/2,height/2);
@@ -86,9 +98,13 @@ function initCircle(){
 
   for(let i = 0;i<numberOfCircles;i++){
     circles.push(circlePoints(center,radiusStart-i*(height/2/numberOfCircles)));
+  //Looks not very nice, so no random here.
+  //offsets.push(floor(random(0,50+1)));
+    offsets.push(i*10);
   }
 }
 
+//Calculates all points on the outline of given circle and returns them as an array
 function circlePoints(center,radius){
   let points = [];
   for(let i=0;i<360+1;i++){
@@ -96,7 +112,7 @@ function circlePoints(center,radius){
   }
   return points;
 }
-
+//Returns a point (vector) on the outline of a given circle
 function pointCoordinates(center,r,angle){
   t = toRadians(angle);
   let x = r*cos(t) + center.x;

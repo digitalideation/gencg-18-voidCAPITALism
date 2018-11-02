@@ -29,7 +29,7 @@ function setup() {
 
 function draw() {
   mouse = new createVector(mouseX,mouseY);
-  if(mp /*&&!drawn*/){
+  if(mp&&!drawn){
     noFill();
     stroke(random(0,255+1),random(0,255+1),random(0,255+1));
     if(diameter<=diameterMin){
@@ -56,7 +56,6 @@ function draw() {
 
     strokeWeight(sw);
     ellipse(mouse.x,mouse.y,diameter,diameter);
-    //ellipse(random(0,windowWidth+1),random(0,windowHeight+1),diameter,diameter);
     drawn = true;
   }
 }
