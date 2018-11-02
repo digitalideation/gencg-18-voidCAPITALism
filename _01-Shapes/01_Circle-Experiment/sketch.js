@@ -14,6 +14,7 @@ let diameter = diameterMin;
 
 let mp = false;
 let drawn = false;
+let continuous = false;
 let decreaseDiameter;
 let decreaseSW;
 
@@ -56,7 +57,9 @@ function draw() {
 
     strokeWeight(sw);
     ellipse(mouse.x,mouse.y,diameter,diameter);
-    drawn = true;
+    if(!continuous){
+      drawn = true;
+    }
   }
 }
 
@@ -69,7 +72,8 @@ function mouseReleased(){
 }
 
 function keyPressed() {
-  if (key == 's' || key == 'S') saveThumb(650, 350);
+  if (key == 's' || key == 'S') {saveThumb(650, 350)};
+  if (key == 'a' || key == 'A')  {continuous=!continuous};
 }
 
 // Tools
