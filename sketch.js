@@ -1,83 +1,148 @@
-// Noise generated circle
-
 // Global var
-// Some of the var might be initialised in gui.js
-var canvas, backgroundGrey, radius;
-var actRandomSeed, count, points, increment;
-
+let c1;
+let c2;
+let c3;
+let c4;
+let c5;
+let c;
+let charsX;
+let charsY;
+let charSize = 12;
+let numberPerColumn = [];
+let flagPerColumn = [];
+let flagDrawColumn = [];
+let startPerColumn = [];
 function setup() {
+  //Fullscreen
+  const allowFullScreen = event => {
+    event.preventDefault();
+      event = event || window.event;
+      if(event.ctrlKey && event.keyCode==70 && event.shiftKey) {
+          document.documentElement.mozRequestFullScreen();
+      }
+  }
+  document.addEventListener('keyup', allowFullScreen)
+
   // Canvas setup
   canvas = createCanvas(windowWidth, windowHeight);
   canvas.parent("p5Container");
   // Detect screen density (retina)
-  // Comment it out if the sketch is too slow
   var density = displayDensity();
   pixelDensity(density);
-  // Init var
-  // some of the var are initialised in gui.js
-  backgroundGrey = 0;
-  count = 150;
-  points = [count];
-  background(backgroundGrey);
-  radius = 20;
-  increment = +1;
+
+  c1 = color(0, 59, 0);
+  c2 = color(0, 143, 17);
+  c3 = color(0, 255, 65);
+  c4 = color(179, 255, 198);
+  c5 = color(255);
+  c = color(255);
+
+  init();
+
+  frameRate(7);
+  textSize(charSize);
 }
 
 function draw() {
-  // background(backgroundGrey, 20);
-  smooth();
+  //Clear
+  fill(0);
+  rect(0,0,width,height);
 
-  // Create points array
-  let faderX = .1;
-  let t = millis()/1000;
-  // let r = map(mouseY,0,height,10,radius);
-  if (radius>width/1.7 && radius>height/1.7) increment = -increment;
-  else if (radius<20) increment = -increment;
-  radius += increment; 
-  let angle = radians(360/count);
+  for (let i = 0; i <= charsX; i++){
+    //Draw this column?
+    if(flagDrawColumn[i]){
+      drawColumn(i*charSize,startPerColumn[i],numberPerColumn[i]);
 
-  for (let i=0; i<count; i++){
-    let radiusRand = radius - noise(t, i*faderX)*50;
-    let x = width/2 + cos(angle*i)*radiusRand;
-    let y = height/2 + sin(angle*i)*radiusRand;
-    points[i] = createVector(x,y);
+      //Increase number of chars in this row?
+      if(flagPerColumn[i]){
+        numberPerColumn[i]=numberPerColumn[i]+floor(random(1,3+1));
+      }else {
+        //If not decrease and move start down
+        randInt = floor(random(0,3+1));
+        numberPerColumn[i]=numberPerColumn[i]-randInt;
+        startPerColumn[i]=startPerColumn[i]+(randInt*charSize);
+      }
+      //Max number of chars reached?
+      if(numberPerColumn[i]*12+startPerColumn[i]>=height){
+        flagPerColumn[i] = 0;
+        numberPerColumn[i]--;
+
+      //0 chars remain?
+      }else if (numberPerColumn[i]<=0) {
+        //Reset column to initial state
+        flagPerColumn[i] = 1;
+        startPerColumn[i] = floor(random(0,charsY+1))*charSize;
+        numberPerColumn[i] = 1;
+        //Dont draw this column anymore
+        flagDrawColumn[i] = 0;
+
+        //Search column which is not currently drawn and set it to active
+        let notFound = true;
+        do{
+          randInt = floor(random(0,charsX+1));
+          if(!flagDrawColumn[randInt]){
+            flagDrawColumn[randInt] = 1;
+            notFound = false;
+          }
+        }while(notFound);
+      }
+    }
   }
+}
 
-  // Draw
-  // stroke(noise(t/10)*255,0,noise(t/1)*100,255);
-  strokeHsluv(noise(t/10)*360,noise(t/20)*50,noise(t)*80);
-  strokeWeight(20);
-  noFill();
-  beginShape();
-  for (let i=0; i<count; i++){
-    // fill(255);
-    // ellipse(points[i].x, points[i].y,2,2);
-    // noFill();
-    curveVertex(points[i].x, points[i].y);
-    if (i==0 || i==count-1) curveVertex(points[i].x, points[i].y);
+function drawColumn(x,y,n){
+  //Draw a whole column, each char with correct color.
+  if(n==1){
+    drawChar(x,y+charSize,c5);
+  }else if (n==2) {
+    drawChar(x,y+1*charSize,c4);
+    drawChar(x,y+2*charSize,c5);
+
+  //if number >= 3 draw n-2 chars with random color, then one with lightgreen and the last with white
+  }else if (n>=3) {
+    for(i=charSize;i<=(n-2)*charSize;i+=charSize){
+      randInt = floor(random(1,3+1));
+      switch (randInt) {
+        case 1:
+          c = c1;
+          break;
+        case 2:
+          c = c2;
+          break;
+        case 3:
+          c = c3;
+          break;
+      }
+      drawChar(x,y+i,c);
+    }
+    drawChar(x,y+(n-1)*charSize,c4);
+    drawChar(x,y+n*charSize,c5);
   }
-  endShape(CLOSE);
+}
+
+function drawChar(x,y,c) {
+  fill(c);
+  let char = String.fromCharCode(random(33,126));
+  text(char,x,y);
+}
+
+function init(){
+  background(0);
+  //Number of chars
+  charsX = floor(width/charSize);
+  charsY = floor(height/charSize);
+
+  for (let i=0;i<=charsX;i++){
+    numberPerColumn.push(floor(random(1,3+1)));
+    startPerColumn.push(floor(random(0,charsY+1))*charSize);
+    flagPerColumn.push(1);
+    flagDrawColumn.push(floor(random(0,1+1)));
+  }
 }
 
 function keyPressed() {
-  if (key == DELETE || key == BACKSPACE) background(360);  
-  if (key == 's' || key == 'S') saveThumb(650, 350);
-}
-
-// Color functions
-function fillHsluv(h, s, l) {
-  var rgb = hsluv.hsluvToRgb([h, s, l]);
-  fill(rgb[0] * 255, rgb[1] * 255, rgb[2] * 255);
-}
-
-function strokeHsluv(h, s, l) {
-  var rgb = hsluv.hsluvToRgb([h, s, l]);
-  stroke(rgb[0] * 255, rgb[1] * 255, rgb[2] * 255);
-}
-
-function colorHsluv(h, s, l) {
-  var rgb = hsluv.hsluvToRgb([h, s, l]);
-  return color(rgb[0] * 255, rgb[1] * 255, rgb[2] * 255);
+  if (key == 't' || key == 'T') {saveThumb(650, 350)}
+  if (key == 's' || key == 'S') {savePic(windowWidth,windowHeight)}
 }
 
 // Tools
@@ -85,9 +150,10 @@ function colorHsluv(h, s, l) {
 // resize canvas when the window is resized
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight, false);
+  init();
 }
 
-//  conversion
+// Int conversion
 function toInt(value) {
   return ~~value;
 }
@@ -99,6 +165,10 @@ function timestamp() {
 
 // Thumb
 function saveThumb(w, h) {
-  let img = get(width / 2 - w / 2, height / 2 - h / 2, w, h);
-  save(img, 'thumb.jpg');
+  let img = get( width/2-w/2, height/2-h/2, w, h);
+  save(img,'thumb.jpg');
+}
+function savePic(w, h) {
+  let img = get( width/2-w/2, height/2-h/2, w, h);
+  save(img,'sc.jpg');
 }
